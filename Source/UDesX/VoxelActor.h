@@ -14,24 +14,27 @@ class UDESX_API AVoxelActor : public AActor
 
 public:
 		//material count = voxel count
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray <UMaterialInterface*> Materials;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
 		int32 randomSeed = 0;
 
+	//size of each voxel in UE units
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
 		int32 voxelSize = 100;
 	
-	/// chunk size in blocks (x by x by x)
+	//chunk size in blocks (base of chunk is chunkWidth by chunkWidth)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
-		int32 chunkLineElements = 10;
+		int32 chunkWidth = 10; //chunkLineElements
 
+	//in chunk coords
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
-		int32 chunkXIndex = 0;
+		int32 chunkX = 0; 
 
+	//in chunk coords
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
-		int32 chunkYIndex = 0;
+		int32 chunkY = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float xMult = 1;
@@ -49,19 +52,19 @@ public:
 		float frequency = 1;
 
 	UPROPERTY()
-		int32 totalChunkElements;
+		int32 totalBlockCount; //chunkTotalElements
 
 	UPROPERTY()
-		int32 chunkZElements;
+		int32 chunkBlockHeight; //chunkZElements
 
 	UPROPERTY()
-		int32 chunkLineElementsSquared;
+		int32 chunkWidthSquared; //chunkLineElementsSquared
 
 	UPROPERTY()
 		int32 voxelSizeHalf;
 
 	UPROPERTY()
-		TArray<int32> chunkFields;
+		TArray<int32> blocks; //chunkFields
 
 	UPROPERTY()
 		UProceduralMeshComponent* proceduralComponent;

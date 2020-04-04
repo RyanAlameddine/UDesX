@@ -37,12 +37,12 @@ void AVoxelActor::Tick(float DeltaTime)
 
 void AVoxelActor::OnConstruction(const FTransform& Transform)
 {
-	chunkZElements = 80;
-	totalChunkElements = chunkLineElements * chunkLineElements * chunkZElements;
-	chunkLineElementsSquared = chunkLineElements * chunkLineElements;
+	chunkBlockHeight = 80;
+	totalBlockCount = chunkWidth * chunkWidth * chunkBlockHeight;
+	chunkWidthSquared = chunkWidth * chunkWidth;
 	voxelSizeHalf = voxelSize / 2;
 
-	FString string = "Voxel_" + FString::FromInt(chunkXIndex) + "_" + FString::FromInt(chunkYIndex);
+	FString string = "Voxel_" + FString::FromInt(chunkX) + "_" + FString::FromInt(chunkY);
 	FName name = FName(*string);
 	proceduralComponent = NewObject<UProceduralMeshComponent>(this, name);
 	proceduralComponent->RegisterComponent();
@@ -58,17 +58,17 @@ void AVoxelActor::OnConstruction(const FTransform& Transform)
 
 void AVoxelActor::GenerateChunk()
 {
-	chunkFields.SetNumUninitialized(totalChunkElements);
+	blocks.SetNumUninitialized(totalBlockCount);
 
-	for (int32 x = 0; x < chunkLineElements; x++) 
+	for (int32 x = 0; x < chunkWidth; x++) 
 	{
-		for (int32 y = 0; y < chunkLineElements; y++)
+		for (int32 y = 0; y < chunkWidth; y++)
 		{
-			for (int32 z = 0; z < chunkZElements; z++)
+			for (int32 z = 0; z < chunkBlockHeight; z++)
 			{
-				int32 index = x + (y * chunkLineElements) + (z * chunkLineElementsSquared);
+				int32 index = x + (y * chunkWidth) + (z * chunkWidthSquared);
 
-				chunkFields[index] = (z < 29) ? 1 : 0;
+				blocks[index] = (z < 29) ? 1 : 0;
 			}
 		}
 	}
@@ -85,14 +85,14 @@ void AVoxelActor::UpdateMesh()
 
 	int32 elementID = 0;
 	
-	for (int32 x = 0; x < chunkLineElements; x++)
+	for (int32 x = 0; x < chunkWidth; x++)
 	{
-		for (int32 y = 0; y < chunkLineElements; y++)
+		for (int32 y = 0; y < chunkWidth; y++)
 		{
-			for (int32 z = 0; z < chunkZElements; z++)
+			for (int32 z = 0; z < chunkBlockHeight; z++)
 			{
-				int32 index = x + (y * chunkLineElements) + (z * chunkLineElementsSquared);
-				int32 meshIndex = chunkFields[index];
+				int32 index = x + (y * chunkWidth) + (z * chunkWidthSquared);
+				int32 meshIndex = blocks[index];
 
 				if (meshIndex > 0) 
 				{
@@ -103,15 +103,15 @@ void AVoxelActor::UpdateMesh()
 					for (int i = 0; i < 6; i++)
 					{
 						FVector mask = bMask[i];
-						int newIndex = index + mask.X + (mask.Y * chunkLineElements) + (mask.Z * chunkLineElementsSquared);
+						int newIndex = index + mask.X + (mask.Y * chunkWidth) + (mask.Z * chunkWidthSquared);
 
 						bool flag = false;
 						if (meshIndex >= 20) flag = true;
-						else if ((x + mask.X < chunkLineElements) && (x + mask.X >= 0) && (y + mask.Y < chunkLineElements) && (y + mask.Y >= 0))
+						else if ((x + mask.X < chunkWidth) && (x + mask.X >= 0) && (y + mask.Y < chunkWidth) && (y + mask.Y >= 0))
 						{
-							if (newIndex < chunkFields.Num() && newIndex >= 0)
+							if (newIndex < blocks.Num() && newIndex >= 0)
 							{
-								if (chunkFields[newIndex] < 1) flag = true;
+								if (blocks[newIndex] < 1) flag = true;
 							}
 						}
 						else flag = true;
