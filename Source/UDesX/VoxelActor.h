@@ -21,8 +21,9 @@ public:
 		int32 randomSeed = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
-		int32 voxelSize = 200;
-
+		int32 voxelSize = 100;
+	
+	/// chunk size in blocks (x by x by x)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
 		int32 chunkLineElements = 10;
 
@@ -79,4 +80,7 @@ public:
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+	void GenerateChunk();
+
+	void UpdateMesh();
 };
